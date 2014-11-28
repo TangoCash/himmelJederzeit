@@ -1,7 +1,7 @@
 himmelJederzeit
 ===============
 
-himmel Jederzeit Plugin für die Coolstream
+himmel Jederzeit Plugin für Neutrino MP
 
 
 This Plugin will provide as many features as possible from the Sky Anytime Concept for Neutrino HD Receiver.
