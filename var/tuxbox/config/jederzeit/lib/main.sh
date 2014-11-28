@@ -35,7 +35,7 @@ awk -v timeSpan=$timeSpan -v output_file=${tmp_file} -v deletionFile=${filmDelet
 		string=`echo $do | sed -e 's/(/ /g'`                                 
 		grep -v "${string}" ${filmFile} > ${tmp_file} 
 		mv ${tmp_file} ${filmFile}
-		log "remove all movies from rules file already in /media/sdX1/movies"
+		log "remove all movies from rules file already in "$mediaVerzeichnis
 	done
 			
 	echo -en "\n\n...bin jederzeit bereit..."
