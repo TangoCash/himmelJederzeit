@@ -241,10 +241,10 @@ case "$1" in
 		fi
 
 		# start pr-auto-timer if desired and found
-		if [ "$pr_auto_timer" = "1" -a -x /lib/tuxbox/plugins/pr-auto-timer ]
+		if [ "$pr_auto_timer" = "1" -a -x /var/tuxbox/plugins/pr-auto-timer ]
 		then
 			console "start pr-auto-timer"
-			/lib/tuxbox/plugins/pr-auto-timer --menu &
+			/var/tuxbox/plugins/pr-auto-timer --menu &
 		fi
 
 		console "done."
