@@ -1,1 +1,19 @@
 MAX_DIFF_MINS=10
+MAX_TMR2_COUNT=250
+DEL_TIMER_REFRESH=0
+END_SHUT_DOWN=0
+SHUT_DOWN_ALSO_DAY=0
+
+#DEL_TIMER_REFRESH:[0]-verhindert erneutes Anlegen auch bereits gelöschter Timer; 1-legt Timer erneut an, führt den Zwischenspeicher weiter; 2-legt Timer neu an ohne ZWischenspeicher
+#END_SHUT_DOWN:[0]-lässt die Box an;1-führt in Standby;2-führt in DeepStandBy;3-führt in PowerOff;4-startet neu
+#SHUT_DOWN_ALSO_DAY:[0] - führt SHUT_DOWN nur zwischen 00:00 und 06:00 Uhr durch; 1 - führt SHUT_DOWN immer durch
+
+#SKY_CINEMA="HD"
+# or
+#SKY_CINEMA="SD;Weekend,18:00-00:00;/mnt/rec/sky_cinema"
+
+#RULE_FILE=/var/tuxbox/config/$ME.rules
+#RULE_FILE_EXT=/var/tuxbox/config/$ME.rulex
+
+#LOG_FILE=off
+#LOG_FILE=/tmp/${ME}_$(date +'%F').log

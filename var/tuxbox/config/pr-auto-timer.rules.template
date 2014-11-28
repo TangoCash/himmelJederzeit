@@ -2,22 +2,44 @@
 #
 # ----------------------------------------------------------------------------
 #
-# Syntax: CHANNELNAME;DAYOFWEEK[,TIMESPAN];REGEX[;FLAGS]
+# Syntax: CHANNELNAME;DAYOFWEEK[,TIMESPAN];REGEX[,EXCLUDE][;FLAGS][;RECDIR]
 #
 # CHANNELNAME	the channelname e.g. "Das Erste HD" or
 #		a bouquet-nr prefixed with an asterisk e.g. "*1"
 #
-# DAYOFWEEK	the day of week e.g. "Mon" for monday or
-#		an asterisk for all days of week
+# DAYOFWEEK	the day of week or an asterisk for all days of week
+#		Possibilities:	"Weekday" or "Mon", "Tue", "Wed", "Thu", "Fri"
+#				"Weekend" or "Sat", "Sun"
+#				"*"
 #
 # TIMESPAN	defines a period in which the timer must start
-#		e.g. "18:45-20:15" or an asterisk for all times
+#		e.g."18:45-20:15" or an asterisk for all times
 #		TIMESPAN is optional; default is "*"
 #
 # REGEX		the name of the show e.g. "Tatort"
+# Titelname,xFilter1 Filter2 FilterN
+##Filter1 AND Filter2 AND FilterN Positive
+# Titelname,+Filter1 Filter2 FilterN
+##Filter1 OR Filter2 OR FilterN Positive
+# Titelname,~Filter1 Filter2 FilterN
+##Filter1 AND Filter2 AND FilternN Negative
+# Titelname,!Filter1 Filter2 FilterN
+##Filter1 OR Filter2 OR FilterN Negative
+# Titelname,-Filter1 Filter2 FilterN
 #
-# FLAGS		accept "Z" to creating a zap timer
+# EXCLUDE	an exclusion expression e.g. "Making of"
+#		EXCLUDE is optional; default is no exclusion
+#
+# FLAGS		accept "R" to creating a record timer
+#		accept "Z" to creating a zap timer
+#		accept "F" to creating the next valid timer only
+#		accept "O" is the same as "F" but will deactivate the rule
+#		define multiple flags by separating them with commas
 #		FLAGS is optional; default is a record timer
+#
+# RECDIR	an alternative recording directory
+#		NOTE: flag-section can be empty, but MUST be defined!
+#		RECDIR is optional; default is the neutrino setting
 #
 # ----------------------------------------------------------------------------
 #
@@ -42,3 +64,33 @@
 ## Zap to all shows containing the word 'Affenhaus'
 ## on channel 'Das Erste HD':
 #Das Erste HD;*;Affenhaus;Z
+
+## Record first show found containing the word 'Tatort'
+## on channel 'Das Erste HD' on sundays:
+#Das Erste HD;Sun;Tatort;F
+
+## Record first show found containing the word 'Tatort'
+## on channel 'Das Erste HD' on sundays.
+## After creating timer the rule-line will be deactivated:
+#Das Erste HD;Sun;Tatort;O
+
+## Record all shows containing the word 'Tatort'
+## on channel 'Das Erste HD' on weekends.
+## Using '/media/records/tatort' as recording directory
+#Das Erste HD;Weekend;Tatort;R;/media/records/tatort
+
+## You don't need the special episodes of LOST,
+## when you plan to view this great series in one run. ;)
+#FOX HD;*;LOST,!Special
+
+## Records all Episodes of Traumschiff but these ones: 
+## Oman Bali Malaysia Vegas Savannah Panama Singapur Bintan Perth Spezial
+#ZDF;*,00:00-18:15;Traumschiff,-Oman Bali Malaysia Vegas Savannah Panama Singapur Bintan Perth Spezial
+
+## Records only Episodes of Traumschiff: 
+## Oman Bali Malaysia Vegas Savannah Panama Singapur Bintan Perth Spezial
+#ZDF;*,00:00-18:15;Traumschiff,~Oman Bali Malaysia Vegas Savannah Panama Singapur Bintan Perth Spezial
+
+##Record only Episode Mord mit der linken Hand from Columbo once
+#*;*;Columbo,+Mord mit der linken Hand;O
+
