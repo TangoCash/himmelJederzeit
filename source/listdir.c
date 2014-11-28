@@ -89,9 +89,12 @@ static void list_dir(const char * dir_name,FILE *fp) {
 }
 
 int main(int argc, char *argv[]) {
+	const char * file_name;
 	const char * dir;
 
-	char file_name[] = "/hdd/movies/myFile";
+	if (argc < 2) return 0;
+
+	file_name = argv[1];
 	FILE *fp;
 
 	fp = fopen(file_name, "a+"); // read mode
@@ -104,7 +107,7 @@ int main(int argc, char *argv[]) {
 
 
 	if (argc > 1) {
-		dir = argv[1];
+		dir = argv[2];
 	} else {
 		dir = "/hdd/movies/anytime";
 	}
