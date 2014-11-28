@@ -13,6 +13,7 @@ initGUI() {
 	log "Testing if initialization has to be done"
 	
 		cp ${jederzeitdir}himmelJederzeit.cfg.template ${jederzeitdir}himmelJederzeit.cfg
+		getMediaDirectory
 		createBouquet
 		identifyAndAddChannels
 		getHimmelJederzeitBouquet

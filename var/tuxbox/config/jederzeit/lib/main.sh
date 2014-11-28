@@ -3,6 +3,11 @@
 
 getMediaDirectory() {
 	mediaVerzeichnis=`grep "network_nfs_recordingdir" /var/tuxbox/config/neutrino.conf | cut -d"=" -f2`
+	length=`echo ${#mediaVerzeichnis}`
+	last_string=`echo $mediaVerzeichnis | cut -c${length}`
+	if [[ $last_string != "/" ]];then
+		mediaVerzeichnis=${mediaVerzeichnis}"/"
+	fi
 }
 
 awkInfos() {

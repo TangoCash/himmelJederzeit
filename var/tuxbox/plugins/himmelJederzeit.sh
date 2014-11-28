@@ -48,8 +48,8 @@ platform=`uname`
 
 pwd=`pwd`
 var=`dirname $pwd`
-root=`dirname $var`
-#root=${root}"/"
+#root=`dirname $var`
+root=${root}"/"
 		
 FilmName="Filme.sorted"
 FilmStatusName="Film.status"
@@ -61,7 +61,8 @@ configdir=${root}"var/tuxbox/config/"
 
 jederzeitdir=${configdir}"jederzeit/"
 output=$jederzeitdir"autotimer/"
-tmp=${jederzeitdir}"tmp/"
+#tmp=${jederzeitdir}"tmp/"
+tmp="/tmp/"
 anytime=$jederzeitdir"anytime"
 
 filmFile=${output}${FilmName}
@@ -112,11 +113,6 @@ removeWrongEntriesFromConfigFile
 
 source ${jederzeitdir}himmelJederzeit.cfg
 getMediaDirectory
-length=`echo ${#mediaVerzeichnis}`
-last_string=`echo $mediaVerzeichnis | cut -c${length}`
-if [[ $last_string != "/" ]];then
-	mediaVerzeichnis=${mediaVerzeichnis}"/"
-fi
 
 export existingMoviesFile=${mediaVerzeichnis}"existingMovies"
 export allXMLFiles=${mediaVerzeichnis}"myFile"
