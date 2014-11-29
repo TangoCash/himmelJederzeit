@@ -35,6 +35,7 @@ identifyAndAddChannels() {
         #wget -O ${wgetDirectory}zwo  "http://127.0.0.1/control/changebouquet?selected=${bouquetId}&bchannels=${ids}"
 
         echo "wget -O ${wgetDirectory}zwo  \"http://127.0.0.1/control/changebouquet?selected=${bouquetId}&bchannels=${ids}\""
+	wget -O ${wgetDirectory}drei "http://127.0.0.1/control/setbouquet?selected=${bouquetId}&action=show"
         wget -O ${wgetDirectory}vier "http://127.0.0.1/control/savebouquet"
 }
 
