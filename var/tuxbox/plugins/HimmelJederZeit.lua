@@ -86,6 +86,7 @@ end
 
 function init_hj()
 	os.execute("cd /var/tuxbox/plugins;./himmelJederzeit.sh initGUI")
+	act_hj()
 end
 
 function act_hj()
