@@ -8,6 +8,7 @@ BEGIN {
 	gsub ("</td>","|");
 	gsub ("<tr>","");
 	gsub ("</tr>","");
+	gsub ("&nbsp; ","x");
 	gsub(/\r/,"")
 	
 	
