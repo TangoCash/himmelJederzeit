@@ -5,6 +5,11 @@
 
 [allgemein]
 
+# Speicherdauer
+# 0 = kurz
+# 1 = mittel (500GB)
+# 2 = lang (2000GB)
+StoragePeriod=0
 
 [control]
 
@@ -29,3 +34,4 @@ Comedy=1
 SciFi=1
 Thriller=1
 Western=1
+

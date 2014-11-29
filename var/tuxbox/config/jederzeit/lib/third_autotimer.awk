@@ -27,9 +27,10 @@ hans=1;
   {
     $9 = "Family";
   }
- 
+
  if ( length($2) > 0 )
  {
+	if ( StoragePeriod == 0 && $3 != "x") {
 	if ( timeSpan != "" )
   	{
     	printf("*%s;*,%s;%s,!Making;O;%sanytime/%s\n",bouquet,timeSpan,$2,mediaVerzeichnis,$9) >> output_file
@@ -38,13 +39,50 @@ hans=1;
   	{
      	printf("*%s;*;%s,!Making;O;%sanytime/%s\n",bouquet,$2,mediaVerzeichnis,$9) >> output_file
   	}
-  	if ( length($6) > 0 )
+  	if ( length($8) > 0 )
+  	{
+		printf("%s|%s|%sanytime/%s\n",$2,$4,mediaVerzeichnis,$9) >> deletionFile
+	}
+	else
+	{
+		printf("no deletiondate delivered %s\n",$2);
+	}
+	}
+	else if ( StoragePeriod == 1 && $5 != "x") {
+	if ( timeSpan != "" )
+  	{
+    	printf("*%s;*,%s;%s,!Making;O;%sanytime/%s\n",bouquet,timeSpan,$2,mediaVerzeichnis,$9) >> output_file
+  	}
+  	else if ( NF > 0 )
+  	{
+     	printf("*%s;*;%s,!Making;O;%sanytime/%s\n",bouquet,$2,mediaVerzeichnis,$9) >> output_file
+  	}
+  	if ( length($8) > 0 )
   	{
 		printf("%s|%s|%sanytime/%s\n",$2,$6,mediaVerzeichnis,$9) >> deletionFile
 	}
 	else
 	{
 		printf("no deletiondate delivered %s\n",$2);
+	}
+	}
+	else if ( StoragePeriod == 2 && $7 != "x") {
+	if ( timeSpan != "" )
+  	{
+    	printf("*%s;*,%s;%s,!Making;O;%sanytime/%s\n",bouquet,timeSpan,$2,mediaVerzeichnis,$9) >> output_file
+  	}
+  	else if ( NF > 0 )
+  	{
+     	printf("*%s;*;%s,!Making;O;%sanytime/%s\n",bouquet,$2,mediaVerzeichnis,$9) >> output_file
+  	}
+  	if ( length($8) > 0 )
+  	{
+		printf("%s|%s|%sanytime/%s\n",$2,$8,mediaVerzeichnis,$9) >> deletionFile
+	}
+	else
+	{
+		printf("no deletiondate delivered %s\n",$2);
+	}
 	}
   }
 }

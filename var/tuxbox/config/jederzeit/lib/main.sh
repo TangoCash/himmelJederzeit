@@ -31,7 +31,8 @@ awkInfos() {
 
 	echo -en "\n\n...bereite das Fleisch vor..."
 	getMediaDirectory
-awk -v timeSpan=$timeSpan -v output_file=${tmp_file} -v deletionFile=${filmDeletionFile} -v bouquet=$bouquetId -v logfile=$log -v mediaVerzeichnis=$mediaVerzeichnis -f $lib/third_autotimer.awk ${filmFile} >> $log
+	echo -en "\n\nStoragePeriod=$StoragePeriod..."
+awk -v timeSpan=$timeSpan -v output_file=${tmp_file} -v deletionFile=${filmDeletionFile} -v bouquet=$bouquetId -v logfile=$log -v mediaVerzeichnis=$mediaVerzeichnis -v StoragePeriod=$StoragePeriod -f $lib/third_autotimer.awk ${filmFile} >> $log
 	log "file should be now optimized "
 	mv ${tmp_file} ${filmFile}
 
