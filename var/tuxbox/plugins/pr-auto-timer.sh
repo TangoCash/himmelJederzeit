@@ -1,2 +1,2 @@
 #!/bin/sh
-/var/tuxbox/plugins/pr-auto-timer --menu
+/var/tuxbox/plugins/pr-auto-timer --menu &
