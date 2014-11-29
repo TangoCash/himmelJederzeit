@@ -85,8 +85,8 @@ function save()
 end
 
 function init_hj()
-	os.execute("cd /var/tuxbox/plugins;./himmelJederzeit.sh initGUI")
-	act_hj()
+	os.execute("cd /var/tuxbox/plugins;./himmelJederzeit.sh initGUI");
+	os.execute("cd /var/tuxbox/plugins;./himmelJederzeit.sh full");
 end
 
 function act_hj()
@@ -94,7 +94,8 @@ function act_hj()
 end
 
 function rem_hj()
-	os.execute("cd /var/tuxbox/plugins;./himmelJederzeit.sh deleteFiles")
+	messagebox.exec{title="HimmelJederzeit", text="to be done....", buttons={ "ok" } }
+	---os.execute("cd /var/tuxbox/plugins;./himmelJederzeit.sh deleteFiles")
 end
 
 function handle_key(a)
