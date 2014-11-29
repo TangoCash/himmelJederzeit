@@ -28,8 +28,11 @@ identifyAndAddChannels() {
         ids=$ids","`grep "Sky Emotion" ${wgetDirectory}channellist.sorted | cut -f1 -d" "`
         ids=$ids","`grep "MGM HD" ${wgetDirectory}channellist.sorted | cut -f1 -d" "`
                 
+	BODY="selected=${bouquetId}&bchannels=${ids}"
+	BODY_LEN=$( busybox echo -n ${BODY} | wc -c )
+	busybox echo -ne "POST /control/changebouquet HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: ${BODY_LEN}\r\n\r\n${BODY}" | nc -i 3 127.0.0.1 80
         
-        wget -O ${wgetDirectory}zwo  "http://127.0.0.1/control/changebouquet?selected=${bouquetId}&bchannels=${ids}"
+        #wget -O ${wgetDirectory}zwo  "http://127.0.0.1/control/changebouquet?selected=${bouquetId}&bchannels=${ids}"
 
         echo "wget -O ${wgetDirectory}zwo  \"http://127.0.0.1/control/changebouquet?selected=${bouquetId}&bchannels=${ids}\""
         wget -O ${wgetDirectory}vier "http://127.0.0.1/control/savebouquet"
