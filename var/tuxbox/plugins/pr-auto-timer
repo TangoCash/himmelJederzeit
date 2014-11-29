@@ -77,7 +77,7 @@ VERSION=0.24
 #	-fix function to get channels from bouquet
 #
 # 0.18
-#	-move pr-auto-timer from /var/plugins to /lib/tuxbox/plugins 
+#	-move pr-auto-timer from /var/plugins to /lib/tuxbox/plugins
 #	-show pr-auto-timer as a script plugin in neutrino
 #	-reformatting awk-blocks (just for my readability)
 #	-remove variables to binarys
@@ -207,89 +207,89 @@ DEBUG_DRY_RUN=0
 DEBUG_DISPLAYLOG=0
 
 init_config() {
-	#Parse config file (default: /var/tuxbox/config/pr-auto-timer.conf)
-	if [ -e $CONFIG_FILE ]; then
-		source $CONFIG_FILE 2>/dev/null
-	fi
-	
-	case $MAX_DIFF_MINS in
-		''|*[!0-9]*) MAX_DIFF_MINS=10 ;;
-	esac
-
-	case $MAX_TMR2_COUNT in
-		''|*[!0-9]*) MAX_TMR2_COUNT=250 ;;
-	esac
-
-	case $END_SHUT_DOWN in
-		''|*[!0-9]*) END_SHUT_DOWN=0 ;;
-	esac
-
-	case $SHUT_DOWN_ALSO_DAY in
-		''|*[!0-9]*) SHUT_DOWN_ALSO_DAY=0 ;;
-	esac
-	
-	if [ ! -d "${LOG_FILE%/*}" ]; then
-		case $LOG_FILE in
-			[oO][fF][fF])
-				LOG_FILE=''
-				;;
-			*)
-				LOG_FILE=/tmp/${ME}_$(date +'%F').log
-				;;
-		esac
-	fi
-	max_diff_secs=$(( $MAX_DIFF_MINS \* 60 ))
-
-	if [ ! -e "$RULE_FILE" ]; then
-		RULE_FILE=/var/tuxbox/config/$ME.rules
-		if [ ! -e "$RULE_FILE" ]; then
-			echo "ERROR: Rules file '$RULE_FILE' does not exist! Exiting."
-			log "ERROR: Rules file '$RULE_FILE' does not exist! Exiting."
-			exit $EXIT_NO_RULE_FILE
-		fi
-	fi
-
-	# support for external rule-file
-	if [ ! -e "$RULE_FILE_EXT" ]; then
-		RULE_FILE_EXT=""
-	fi
-
-	RULE_FILES="$RULE_FILE $RULE_FILE_EXT"
+  #Parse config file (default: /var/tuxbox/config/pr-auto-timer.conf)
+  if [ -e $CONFIG_FILE ]; then
+    source $CONFIG_FILE 2>/dev/null
+  fi
+  
+  case $MAX_DIFF_MINS in
+    ''|*[!0-9]*) MAX_DIFF_MINS=10 ;;
+  esac
+  
+  case $MAX_TMR2_COUNT in
+    ''|*[!0-9]*) MAX_TMR2_COUNT=250 ;;
+  esac
+  
+  case $END_SHUT_DOWN in
+    ''|*[!0-9]*) END_SHUT_DOWN=0 ;;
+  esac
+  
+  case $SHUT_DOWN_ALSO_DAY in
+    ''|*[!0-9]*) SHUT_DOWN_ALSO_DAY=0 ;;
+  esac
+  
+  if [ ! -d "${LOG_FILE%/*}" ]; then
+    case $LOG_FILE in
+      [oO][fF][fF])
+        LOG_FILE=''
+      ;;
+      *)
+        LOG_FILE=/tmp/${ME}_$(date +'%F').log
+      ;;
+    esac
+  fi
+  max_diff_secs=$(( $MAX_DIFF_MINS \* 60 ))
+  
+  if [ ! -e "$RULE_FILE" ]; then
+    RULE_FILE=/var/tuxbox/config/$ME.rules
+    if [ ! -e "$RULE_FILE" ]; then
+      echo "ERROR: Rules file '$RULE_FILE' does not exist! Exiting."
+      log "ERROR: Rules file '$RULE_FILE' does not exist! Exiting."
+      exit $EXIT_NO_RULE_FILE
+    fi
+  fi
+  
+  # support for external rule-file
+  if [ ! -e "$RULE_FILE_EXT" ]; then
+    RULE_FILE_EXT=""
+  fi
+  
+  RULE_FILES="$RULE_FILE $RULE_FILE_EXT"
 }
 
 init_temp() {
-	#Init temporary directory to cache EPG data etc.
-	temp_dir=$(mktemp -dt $ME.XXXXXX)
-	log "\tinit_temp: Temporary directory: '$temp_dir'"
+  #Init temporary directory to cache EPG data etc.
+  temp_dir=$(mktemp -dt $ME.XXXXXX)
+  log "\tinit_temp: Temporary directory: '$temp_dir'"
 }
 
 init_displaylog() {
-	#Init display log file used for --menu-mode
-	displaylogfile="$temp_dir/display.log"
+  #Init display log file used for --menu-mode
+  displaylogfile="$temp_dir/display.log"
 }
 
 init_settings() {
-	#Init Tuxbox settings (record/zap extra time)
-	record_correction_secs_before=0
-	record_correction_secs_after=0
-	zap_correction_secs_before=0
-
-	if [ -f /var/tuxbox/config/timerd.conf ]; then
-		record_correction_secs_before=$(egrep EXTRA_TIME_START /var/tuxbox/config/timerd.conf | cut -d'=' -f2)
-		record_correction_secs_after=$(egrep EXTRA_TIME_END /var/tuxbox/config/timerd.conf | cut -d'=' -f2)
-	fi
-
-	if [ -f /var/tuxbox/config/neutrino.conf ]; then
-		zap_correction_secs_before=$(( $(egrep zapto_pre_time /var/tuxbox/config/neutrino.conf | cut -d'=' -f2) * 60 ))
-	fi
-	
-	log "\tinit_settings: record_correction_secs_before: $record_correction_secs_before, record_correction_secs_after: $record_correction_secs_after, zap_correction_secs_before: $zap_correction_secs_before"
+  #Init Tuxbox settings (record/zap extra time)
+  record_correction_secs_before=0
+  record_correction_secs_after=0
+  zap_correction_secs_before=0
+  
+  if [ -f /var/tuxbox/config/timerd.conf ]; then
+    record_correction_secs_before=$(egrep EXTRA_TIME_START /var/tuxbox/config/timerd.conf | cut -d'=' -f2)
+    record_correction_secs_after=$(egrep EXTRA_TIME_END /var/tuxbox/config/timerd.conf | cut -d'=' -f2)
+  fi
+  
+  if [ -f /var/tuxbox/config/neutrino.conf ]; then
+    zap_correction_secs_before=$(( $(egrep zapto_pre_time /var/tuxbox/config/neutrino.conf | cut -d'=' -f2) * 60 ))
+  fi
+  
+  log "\tinit_settings: record_correction_secs_before: $record_correction_secs_before, record_correction_secs_after: $record_correction_secs_after, zap_correction_secs_before: $zap_correction_secs_before"
 }
 
 init_webserver() {
-	#Build web server URL for API access including authentication
-	#returns: web server base URL, e. g. http://user:pass@localhost
-	webserver_url=$(awk '
+  #Build web server URL for API access including authentication
+  #returns: web server base URL, e. g. http://user:pass@localhost
+  webserver_url=$(awk '
 		BEGIN {
 			FS="=";
 		}
@@ -318,24 +318,24 @@ init_webserver() {
 				printf("http://localhost:%i\n", port);
 			}
 		}
-	' /var/tuxbox/config/nhttpd.conf)
+  ' /var/tuxbox/config/nhttpd.conf)
 }
 
 begin_ifs_block() {
-	#Backup IFS (input field separator) to restore it after parsing arguments
-	IFS_SAVE=$IFS
-	set -f
+  #Backup IFS (input field separator) to restore it after parsing arguments
+  IFS_SAVE=$IFS
+  set -f
 }
 
 end_ifs_block() {
-	#Restore (input field separator) IFS after parsing arguments
-	IFS=$IFS_SAVE
-	set +f
+  #Restore (input field separator) IFS after parsing arguments
+  IFS=$IFS_SAVE
+  set +f
 }
 
 url_encode() {
-	#http://rosettacode.org/wiki/URL_encoding#AWK
-	echo $*|awk '
+  #http://rosettacode.org/wiki/URL_encoding#AWK
+  echo $*|awk '
 		BEGIN {
 			for (i = 0; i <= 255; i++)
 				ord[sprintf("%c", i)] = i
@@ -355,318 +355,318 @@ url_encode() {
 		}
 
 		{ print escape($0) }
-	'
+  '
 }
 
 parse_options() {
-	#Parse pr-auto-timer command line arguments
-	if [ $# -gt 0 ]; then
-		case $1 in
-			-m|--menu)
-				opt_menu=true
-			;;
-		esac
-	fi
+  #Parse pr-auto-timer command line arguments
+  if [ $# -gt 0 ]; then
+    case $1 in
+      -m|--menu)
+        opt_menu=true
+      ;;
+    esac
+  fi
 }
 
 parse_regexes() {
-	#Parse search regexes
-	regex=$(trim ${regex})
-	xregex=$(trim ${xregex})
-	yregex=""
-	nregex=""
-	jregex=""
-	if [ ${#xregex} -le 1 ]; then
-		xregex=""
-	elif [ X${xregex:0:1} = X! ]; then	# tricking shell with an uppercase X
-		xregex=${xregex:1}		# to avoid interpreting ! as an operator
-		xregex=$(trim ${xregex})	# and trim again
-	elif [ X${xregex:0:1} = X+ ]; then	# tricking shell with an uppercase X
-		xregex=${xregex:1}		# to avoid interpreting + as an operator
-		yregex=$(trim ${xregex})	# and trim again
-		xregex=""
-	elif [ X${xregex:0:1} = X- ]; then	# tricking shell with an uppercase X
-		xregex=${xregex:1}		# to avoid interpreting - as an operator
-		nregex=$(trim ${xregex})	# and trim again
-		xregex=""
-	elif [ X${xregex:0:1} = X~ ]; then	# tricking shell with an uppercase X
-		xregex=${xregex:1}		# to avoid interpreting ~ as an operator
-		jregex=$(trim ${xregex})	# and trim again
-		xregex=""
-	else
-		regex=$regex" , "$xregex	# no ! + - found - add to regex again (the comma too)
-		xregex=""
-	fi
+  #Parse search regexes
+  regex=$(trim ${regex})
+  xregex=$(trim ${xregex})
+  yregex=""
+  nregex=""
+  jregex=""
+  if [ ${#xregex} -le 1 ]; then
+    xregex=""
+    elif [ X${xregex:0:1} = X! ]; then	# tricking shell with an uppercase X
+    xregex=${xregex:1}		# to avoid interpreting ! as an operator
+    xregex=$(trim ${xregex})	# and trim again
+    elif [ X${xregex:0:1} = X+ ]; then	# tricking shell with an uppercase X
+    xregex=${xregex:1}		# to avoid interpreting + as an operator
+    yregex=$(trim ${xregex})	# and trim again
+    xregex=""
+    elif [ X${xregex:0:1} = X- ]; then	# tricking shell with an uppercase X
+    xregex=${xregex:1}		# to avoid interpreting - as an operator
+    nregex=$(trim ${xregex})	# and trim again
+    xregex=""
+    elif [ X${xregex:0:1} = X~ ]; then	# tricking shell with an uppercase X
+    xregex=${xregex:1}		# to avoid interpreting ~ as an operator
+    jregex=$(trim ${xregex})	# and trim again
+    xregex=""
+  else
+    regex=$regex" , "$xregex	# no ! + - found - add to regex again (the comma too)
+    xregex=""
+  fi
 }
 
 parse_timespan() {
-	#Parse possible timespan
-	timespan="$1"
-
-	if [ "$timespan" = "" ]; then
-		timespan="*"
-		return
-	fi
-
-	#split timespan
-	begin_ifs_block
-		IFS='-'
-		set -- $timespan
-		timespan_start=$1
-		timespan_stop=$2
-	end_ifs_block
-
-	#split timespan_start
-	begin_ifs_block
-		IFS=':'
-		set -- $timespan_start
-		timespan_start_h=$1
-		timespan_start_m=$2
-	end_ifs_block
-
-	#split timespan_stop
-	begin_ifs_block
-		IFS=':'
-		set -- $timespan_stop
-		timespan_stop_h=$1
-		timespan_stop_m=$2
-	end_ifs_block
-
-	e=0
-	#check format hh:mm
-	echo $timespan_start | grep -q '^[0-9][0-9]:[0-9][0-9]'
-		e=$(($e+$?))
-	echo $timespan_stop | grep -q '^[0-9][0-9]:[0-9][0-9]'
-		e=$(($e+$?))
-	#check hours
-	if [ "$timespan_start_h" -gt "23" -o "$timespan_stop_h" -gt "23" ]; then
-		e=$(($e+1))
-	fi
-	#check minutes
-	if [ "$timespan_start_m" -gt "59" -o "$timespan_stop_m" -gt "59" ]; then
-		e=$(($e+1))
-	fi
-	#finally we use the date-command to check the full string
-	date -d $timespan_start +%s 2>/dev/null 1>/dev/null
-		e=$(($e+$?))
-	date -d $timespan_stop +%s 2>/dev/null 1>/dev/null
-		e=$(($e+$?))
-
-	if [ $e -ne 0 ]; then
-		log "\tparse_timespan: Error while checking! timespan disabled!"
-		timespan="*"
-	else
-		timespan_start_s=$(date -d $timespan_start +%s)
-		timespan_stop_s=$(date -d $timespan_stop +%s)
-		if [ $timespan_start_s -gt $timespan_stop_s ]; then
-			timespan_over_midnight=true
-		else
-			timespan_over_midnight=false
-		fi
-	fi
+  #Parse possible timespan
+  timespan="$1"
+  
+  if [ "$timespan" = "" ]; then
+    timespan="*"
+    return
+  fi
+  
+  #split timespan
+  begin_ifs_block
+  IFS='-'
+  set -- $timespan
+  timespan_start=$1
+  timespan_stop=$2
+  end_ifs_block
+  
+  #split timespan_start
+  begin_ifs_block
+  IFS=':'
+  set -- $timespan_start
+  timespan_start_h=$1
+  timespan_start_m=$2
+  end_ifs_block
+  
+  #split timespan_stop
+  begin_ifs_block
+  IFS=':'
+  set -- $timespan_stop
+  timespan_stop_h=$1
+  timespan_stop_m=$2
+  end_ifs_block
+  
+  e=0
+  #check format hh:mm
+  echo $timespan_start | grep -q '^[0-9][0-9]:[0-9][0-9]'
+  e=$(($e+$?))
+  echo $timespan_stop | grep -q '^[0-9][0-9]:[0-9][0-9]'
+  e=$(($e+$?))
+  #check hours
+  if [ "$timespan_start_h" -gt "23" -o "$timespan_stop_h" -gt "23" ]; then
+    e=$(($e+1))
+  fi
+  #check minutes
+  if [ "$timespan_start_m" -gt "59" -o "$timespan_stop_m" -gt "59" ]; then
+    e=$(($e+1))
+  fi
+  #finally we use the date-command to check the full string
+  date -d $timespan_start +%s 2>/dev/null 1>/dev/null
+  e=$(($e+$?))
+  date -d $timespan_stop +%s 2>/dev/null 1>/dev/null
+  e=$(($e+$?))
+  
+  if [ $e -ne 0 ]; then
+    log "\tparse_timespan: Error while checking! timespan disabled!"
+    timespan="*"
+  else
+    timespan_start_s=$(date -d $timespan_start +%s)
+    timespan_stop_s=$(date -d $timespan_stop +%s)
+    if [ $timespan_start_s -gt $timespan_stop_s ]; then
+      timespan_over_midnight=true
+    else
+      timespan_over_midnight=false
+    fi
+  fi
 }
 
 parse_flags() {
-	#Parse flags of entrys in rule file
-	event_type=$TIMERD_EVENT_TYPE_RECORD
-	first_match=false
-	only_once=false
-	case $1 in
-		Z|*,Z|Z,*|*,Z,*)
-			event_type=$TIMERD_EVENT_TYPE_ZAPTO
-		;;
-	esac
-	case $1 in
-		R|*,R|R,*|*,R,*)
-			event_type=$TIMERD_EVENT_TYPE_RECORD
-		;;
-	esac
-	case $1 in
-		F|*,F|F,*|*,F,*)
-			first_match=true
-		;;
-	esac
-	case $1 in
-		O|*,O|O,*|*,O,*)
-			only_once=true
-			first_match=true
-		;;
-	esac
+  #Parse flags of entrys in rule file
+  event_type=$TIMERD_EVENT_TYPE_RECORD
+  first_match=false
+  only_once=false
+  case $1 in
+    Z|*,Z|Z,*|*,Z,*)
+      event_type=$TIMERD_EVENT_TYPE_ZAPTO
+    ;;
+  esac
+  case $1 in
+    R|*,R|R,*|*,R,*)
+      event_type=$TIMERD_EVENT_TYPE_RECORD
+    ;;
+  esac
+  case $1 in
+    F|*,F|F,*|*,F,*)
+      first_match=true
+    ;;
+  esac
+  case $1 in
+    O|*,O|O,*|*,O,*)
+      only_once=true
+      first_match=true
+    ;;
+  esac
 }
 
 parse_recdir() {
-	#Parse recording directory
-	if [ $event_type = $TIMERD_EVENT_TYPE_ZAPTO ]; then
-		recdir=""
-	else
-		recdir=$(url_encode "$recdir")
-	fi
+  #Parse recording directory
+  if [ $event_type = $TIMERD_EVENT_TYPE_ZAPTO ]; then
+    recdir=""
+  else
+    recdir=$(url_encode "$recdir")
+  fi
 }
 
 parse_dowgroup() {
-	#Check for weekday or weekend and set var dowgroup
-	dowgroup=$(echo $dowfilter | awk '{print tolower($0)}')
-	if [ "$dowgroup" = "weekday" -o "$dowgroup" = "weekend" ]; then
-		case $dow in
-			Mon|Tue|Wed|Thu|Fri)
-				if [ "$dowgroup" = "weekday" ]; then
-					dowgroup=true
-				fi
-			;;
-			Sat|Sun)
-				if [ "$dowgroup" = "weekend" ]; then
-					dowgroup=true
-				fi
-			;;
-		esac
-	fi
+  #Check for weekday or weekend and set var dowgroup
+  dowgroup=$(echo $dowfilter | awk '{print tolower($0)}')
+  if [ "$dowgroup" = "weekday" -o "$dowgroup" = "weekend" ]; then
+    case $dow in
+      Mon|Tue|Wed|Thu|Fri)
+        if [ "$dowgroup" = "weekday" ]; then
+          dowgroup=true
+        fi
+      ;;
+      Sat|Sun)
+        if [ "$dowgroup" = "weekend" ]; then
+          dowgroup=true
+        fi
+      ;;
+    esac
+  fi
 }
 
 parse_sky_cinema() {
-	if [ "$SKY_CINEMA" = "" ]; then
-		sky_cinema=""
-		return
-	fi
-
-	# split $SKY_CINEMA
-	begin_ifs_block
-		IFS=';'
-		set -- $SKY_CINEMA
-		sky_cinema=$1
-		dowfilter=${2:-*}
-		recdir=$3
-	end_ifs_block
-
-	# split dowfilter
-	begin_ifs_block
-		IFS=','
-		set -- $dowfilter
-		dowfilter=$1
-		timespan=$2
-	end_ifs_block
-
-	sky_start_sec_add=0
-
-	case $(echo $sky_cinema | awk '{print toupper($0)}') in
-		SD)
-			sky_cinema="Sky Cinema"
-		;;
-		HD)
-			sky_cinema="Sky Cinema HD"
-		;;
-		1)
-			sky_cinema="Sky Cinema +1"
-			sky_start_sec_add=$((60 \* 60))
-		;;
-		24)
-			sky_cinema="Sky Cinema +24"
-			sky_start_sec_add=$((60 \* 60 \* 24))
-		;;
-		*)
-			sky_cinema=""
-		;;
-	esac
+  if [ "$SKY_CINEMA" = "" ]; then
+    sky_cinema=""
+    return
+  fi
+  
+  # split $SKY_CINEMA
+  begin_ifs_block
+  IFS=';'
+  set -- $SKY_CINEMA
+  sky_cinema=$1
+  dowfilter=${2:-*}
+  recdir=$3
+  end_ifs_block
+  
+  # split dowfilter
+  begin_ifs_block
+  IFS=','
+  set -- $dowfilter
+  dowfilter=$1
+  timespan=$2
+  end_ifs_block
+  
+  sky_start_sec_add=0
+  
+  case $(echo $sky_cinema | awk '{print toupper($0)}') in
+    SD)
+      sky_cinema="Sky Cinema"
+    ;;
+    HD)
+      sky_cinema="Sky Cinema HD"
+    ;;
+    1)
+      sky_cinema="Sky Cinema +1"
+      sky_start_sec_add=$((60 \* 60))
+    ;;
+    24)
+      sky_cinema="Sky Cinema +24"
+      sky_start_sec_add=$((60 \* 60 \* 24))
+    ;;
+    *)
+      sky_cinema=""
+    ;;
+  esac
 }
 
 log() {
-	#Log message to log file
-	#$*: Log message
-	if [ "$LOG_FILE" != "" ]; then
-		echo -e $(date +'%F %H:%M:%S') [$$]: "$*" >> $LOG_FILE
-	fi
+  #Log message to log file
+  #$*: Log message
+  if [ "$LOG_FILE" != "" ]; then
+    echo -e $(date +'%F %H:%M:%S') [$$]: "$*" >> $LOG_FILE
+  fi
 }
 
 displaylog() {
-	#Log message to display log (--menu-mode)
-	#$*: Log message
-	# why? if [ $opt_menu ]; then
-		echo -e "$@" >> $displaylogfile
-	# fi
+  #Log message to display log (--menu-mode)
+  #$*: Log message
+  # why? if [ $opt_menu ]; then
+  echo -e "$@" >> $displaylogfile
+  # fi
 }
 
 trim() {
-	# helper function to strip unnecessary spaces from string
-	echo "$@" | sed 's/^ *//g;s/ *$//g;s/ \{1,\}/ /g'
+  # helper function to strip unnecessary spaces from string
+  echo "$@" | sed 's/^ *//g;s/ *$//g;s/ \{1,\}/ /g'
 }
 
 dos2unix() {
-	# helper function to simulate dos2unix
-	sed 's/\r$//'
+  # helper function to simulate dos2unix
+  sed 's/\r$//'
 }
 
 get_channel_id_by_channel_name() {
-	#$1: channel name (ignore case)
-	#returns: id of the first(!) matching channel
-	temp_file="$temp_dir/channellist"
-	if [ ! -e "$temp_file" ]; then
-		wget -qO "$temp_file" "$webserver_url/control/channellist"
-	fi
-	awk -v channel="$1" '
+  #$1: channel name (ignore case)
+  #returns: id of the first(!) matching channel
+  temp_file="$temp_dir/channellist"
+  if [ ! -e "$temp_file" ]; then
+    wget -qO "$temp_file" "$webserver_url/control/channellist"
+  fi
+  awk -v channel="$1" '
 		/^[0-9a-f]{16} / {
 			if (tolower($0) == tolower($1 " " channel)) {
 				print $1;
 				exit 0;
 			}
 		}
-	' $temp_file
-	#Nooooooooooooo! This wouldn't have been necessary if query string handling worked in Neutrino...
+  ' $temp_file
+  #Nooooooooooooo! This wouldn't have been necessary if query string handling worked in Neutrino...
 }
 
 get_channel_xml() {
-	#Fetch EPG data in XML for a specified channel.
-	#$1: channel name
-	#returns: XML EPG data
-	channel_id=$(get_channel_id_by_channel_name "$1")
-	if [ "$channel_id" != "" ]; then
-		temp_file="$temp_dir/$channel_id"
-		if [ ! -e "$temp_file" ]; then
-			wget -qO "$temp_file" "$webserver_url/control/epg?xml=true&details=true&channelid=$channel_id"
-		fi
-		cat "$temp_file"
-	else
-		log "\t\tget_channel_xml: !!! WARNING: Channel '$1' was NOT found. Skipping !!!"
-	fi
+  #Fetch EPG data in XML for a specified channel.
+  #$1: channel name
+  #returns: XML EPG data
+  channel_id=$(get_channel_id_by_channel_name "$1")
+  if [ "$channel_id" != "" ]; then
+    temp_file="$temp_dir/$channel_id"
+    if [ ! -e "$temp_file" ]; then
+      wget -qO "$temp_file" "$webserver_url/control/epg?xml=true&details=true&channelid=$channel_id"
+    fi
+    cat "$temp_file"
+  else
+    log "\t\tget_channel_xml: !!! WARNING: Channel '$1' was NOT found. Skipping !!!"
+  fi
 }
 
 get_channels_from_bouquet() {
-	#$1: bouquet number
-	#returns: channel names
-	_channels=$(wget -qO - "$webserver_url/control/getbouquet?bouquet=${1}" | dos2unix)
-	echo "$_channels" | cut -d" " -f3-
+  #$1: bouquet number
+  #returns: channel names
+  _channels=$(wget -qO - "$webserver_url/control/getbouquet?bouquet=${1}" | dos2unix)
+  echo "$_channels" | cut -d" " -f3-
 }
 
 get_corrected_start_stop_times() {
-	#Calculate corrected start/stop times using the tuxbox vaules (EXTRA_ etc.)
-	#$1: start secs
-	#$2: stop secs
-	#$3: timerd event type
-	#returns: $start_sec_corrected $stop_sec_corrected
-	if [ $3 = $TIMERD_EVENT_TYPE_ZAPTO ]; then
-		start_sec_corrected=$(( $1 - $zap_correction_secs_before )) 
-		stop_sec_corrected=0
-	else
-		start_sec_corrected=$(( $1 - $record_correction_secs_before )) 
-		stop_sec_corrected=$(( $2 + $record_correction_secs_after ))
-	fi
-	echo $start_sec_corrected $stop_sec_corrected
+  #Calculate corrected start/stop times using the tuxbox vaules (EXTRA_ etc.)
+  #$1: start secs
+  #$2: stop secs
+  #$3: timerd event type
+  #returns: $start_sec_corrected $stop_sec_corrected
+  if [ $3 = $TIMERD_EVENT_TYPE_ZAPTO ]; then
+    start_sec_corrected=$(( $1 - $zap_correction_secs_before ))
+    stop_sec_corrected=0
+  else
+    start_sec_corrected=$(( $1 - $record_correction_secs_before ))
+    stop_sec_corrected=$(( $2 + $record_correction_secs_after ))
+  fi
+  echo $start_sec_corrected $stop_sec_corrected
 }
 
 get_sky_moviedata() {
-	# we use a static tmp-dir
-	test -d /tmp/$ME || mkdir -p /tmp/$ME
-
-	data_file=/tmp/$ME/sky_moviedata
-	if [ -e $data_file ]; then
-		if [ $(($(date +%s)\-$(date -r $data_file +%s))) -gt 86400 ]; then
-			rm -f $data_file
-		fi
-	fi
-	if [ ! -e $data_file ]; then
-		log "\t\tget_sky_moviedata: get informations ..."
-		wget -qO "$data_file" "http://www.moviepilot.de/liste/sky-neustarts-filmschauer"
-	fi
-
-	test -e $data_file && cat $data_file | awk '
+  # we use a static tmp-dir
+  test -d /tmp/$ME || mkdir -p /tmp/$ME
+  
+  data_file=/tmp/$ME/sky_moviedata
+  if [ -e $data_file ]; then
+    if [ $(($(date +%s)\-$(date -r $data_file +%s))) -gt 86400 ]; then
+      rm -f $data_file
+    fi
+  fi
+  if [ ! -e $data_file ]; then
+    log "\t\tget_sky_moviedata: get informations ..."
+    wget -qO "$data_file" "http://www.moviepilot.de/liste/sky-neustarts-filmschauer"
+  fi
+  
+  test -e $data_file && cat $data_file | awk '
 		BEGIN {
 			false=0;
 			found=false;
@@ -734,48 +734,48 @@ get_sky_moviedata() {
 			found=false;
 			next;
 		}
-	'
+  '
 }
 
 find_show() {
-	#Find a show by (exact) channel name or bouquet number and RegEx(!) for show name.
-	#$1: channel
-	#$2: show name regex
-	#$3: exclude regex ALL WORDS
-	#$4: include regex ALL WORDS
-	#$5: exclude regex ONE WORD
-	#$6: include regex ONE WORD
-	#returns: list of found shows in the format 'CHANNEL_ID|START_SEC|STOP_SEC|CHANNEL_NAME|DESCRIPTION'
-	case $1 in
-		\**|\*)
-			if [ "$1" = "*" ]; then
-				bouquet=1
-			else
-				bouquet=$(echo $1 | awk '{print substr($0,2)}')
-			fi
-			log "\t\tfind_show: Bouquet: $bouquet"
-			channels=$(get_channels_from_bouquet $bouquet)
-			echo -e "$channels" | while read channel; do
-				find_show_by_regex "$channel" "$2" "$3" "$4" "$5" "$6"
-			done
-			;;
-		*)
-			find_show_by_regex "$1" "$2" "$3" "$4" "$5" "$6"
-			;;
-	esac
+  #Find a show by (exact) channel name or bouquet number and RegEx(!) for show name.
+  #$1: channel
+  #$2: show name regex
+  #$3: exclude regex ALL WORDS
+  #$4: include regex ALL WORDS
+  #$5: exclude regex ONE WORD
+  #$6: include regex ONE WORD
+  #returns: list of found shows in the format 'CHANNEL_ID|START_SEC|STOP_SEC|CHANNEL_NAME|DESCRIPTION'
+  case $1 in
+    \**|\*)
+      if [ "$1" = "*" ]; then
+        bouquet=1
+      else
+        bouquet=$(echo $1 | awk '{print substr($0,2)}')
+      fi
+      log "\t\tfind_show: Bouquet: $bouquet"
+      channels=$(get_channels_from_bouquet $bouquet)
+      echo -e "$channels" | while read channel; do
+        find_show_by_regex "$channel" "$2" "$3" "$4" "$5" "$6"
+      done
+    ;;
+    *)
+      find_show_by_regex "$1" "$2" "$3" "$4" "$5" "$6"
+    ;;
+  esac
 }
 
 find_show_by_regex() {
-	#Find a show by (exact) channel name and RegEx(!) for show name.
-	#$1: channel name
-	#$2: show name regex
-	#$3: exclude regex ALL WORDS
-	#$4: include regex ALL WORDS
-	#$5: exclude regex ONE WORD
-	#$6: include regex ONE WORD
-	#returns: list of found shows in the format 'CHANNEL_ID|START_SEC|STOP_SEC|CHANNEL_NAME|DESCRIPTION'
-	xml=$(get_channel_xml "$1")
-	result=$(echo -ne "$xml"|awk '
+  #Find a show by (exact) channel name and RegEx(!) for show name.
+  #$1: channel name
+  #$2: show name regex
+  #$3: exclude regex ALL WORDS
+  #$4: include regex ALL WORDS
+  #$5: exclude regex ONE WORD
+  #$6: include regex ONE WORD
+  #returns: list of found shows in the format 'CHANNEL_ID|START_SEC|STOP_SEC|CHANNEL_NAME|DESCRIPTION'
+  xml=$(get_channel_xml "$1")
+  result=$(echo -ne "$xml"|awk '
 		BEGIN {
 			false=0;
 			true=1;
@@ -923,26 +923,26 @@ find_show_by_regex() {
 				printf("%s|%i|%i|%s|%s\n", channel_id, start_sec, stop_sec, channel_name, description);
 			}
 		}
-	' iiclude_regex="$6" xxclude_regex="$5" include_regex="$4" exclude_regex="$3" show_regex="$2" channel_name="$1")
-
-	if [ $? -eq 0 ]; then
-		matches=$(echo "$result"|wc -l)
-		log "\t\tfind_show_by_regex: Found $matches matches for regex '$2' (excl. all '$3') (excl. one '$5') (incl. all '$4') (incl. one '$6') on channel '$1'."
-		echo -e "$result"
-		return 0
-	else
-		log "\t\tfind_show_by_regex: Found NO matches for regex '$2' (excl. all '$3') (excl. one '$5') (incl. all '$4') (incl. one '$6') on channel '$1'."
-		return 1
-	fi
+  ' iiclude_regex="$6" xxclude_regex="$5" include_regex="$4" exclude_regex="$3" show_regex="$2" channel_name="$1")
+  
+  if [ $? -eq 0 ]; then
+    matches=$(echo "$result"|wc -l)
+    log "\t\tfind_show_by_regex: Found $matches matches for regex '$2' (excl. all '$3') (excl. one '$5') (incl. all '$4') (incl. one '$6') on channel '$1'."
+    echo -e "$result"
+    return 0
+  else
+    log "\t\tfind_show_by_regex: Found NO matches for regex '$2' (excl. all '$3') (excl. one '$5') (incl. all '$4') (incl. one '$6') on channel '$1'."
+    return 1
+  fi
 }
 
 find_show_by_start_sec() {
-	#Find a show by (exact) channel name and start time.
-	#$1: channel name
-	#$2: start time in seconds
-	#returns: list of found shows in the format 'CHANNEL_ID|START_SEC|STOP_SEC'
-	xml=$(get_channel_xml "$1")
-	result=$(echo -ne "$xml"|awk -v __start_sec="$2" '
+  #Find a show by (exact) channel name and start time.
+  #$1: channel name
+  #$2: start time in seconds
+  #returns: list of found shows in the format 'CHANNEL_ID|START_SEC|STOP_SEC'
+  xml=$(get_channel_xml "$1")
+  result=$(echo -ne "$xml"|awk -v __start_sec="$2" '
 		BEGIN {
 			matches=0;
 		}
@@ -975,23 +975,23 @@ find_show_by_start_sec() {
 				printf("%s|%i|%i\n", channel_id, start_sec, stop_sec);
 			}
 		}
-	')
-
-	if [ $? -eq 0 ]; then
-		log "\t\tfind_show_by_start_sec: Found match for start time '$2' on channel '$1'."
-		echo -e "$result"
-		return 0
-	fi
+  ')
+  
+  if [ $? -eq 0 ]; then
+    log "\t\tfind_show_by_start_sec: Found match for start time '$2' on channel '$1'."
+    echo -e "$result"
+    return 0
+  fi
 }
 
 find_timer() {
-	#Find an (exact) existing timer using channel name, alarm time, stop time and event type
-	#$1: channel name (ignore case)
-	#$2: alarm time
-	#$3: stop time
-	#$4: event type (5: record, 3: zapto)
-	#Note: find_timer ignores repeated timers
-	wget -qO - "$webserver_url/control/timer" | awk -v pattern="# $4 0 0 # $2 $3 $1" '
+  #Find an (exact) existing timer using channel name, alarm time, stop time and event type
+  #$1: channel name (ignore case)
+  #$2: alarm time
+  #$3: stop time
+  #$4: event type (5: record, 3: zapto)
+  #Note: find_timer ignores repeated timers
+  wget -qO - "$webserver_url/control/timer" | awk -v pattern="# $4 0 0 # $2 $3 $1" '
 		BEGIN {
 			returncode=1;
 		}
@@ -1004,230 +1004,230 @@ find_timer() {
 		END {
 			exit returncode;
 		}
-	'
+  '
 }
 
 prevent_timer_by_timespan() {
-	#$1: alarm time
-	if [ "$timespan" = "*" ]; then
-		return 1 # don't prevent
-	fi
-
-	timer_start_h=$(($(echo $(date -D %s -d ${1} +%H) | sed 's/^0//') * 60 * 60))
-	timer_start_m=$(($(echo $(date -D %s -d ${1} +%M) | sed 's/^0//') * 60))
-	timer_start=$((${timer_start_h} + ${timer_start_m}))
-
-	timespan_from_h=$(($(echo ${timespan_start_h} | sed 's/^0//') * 60 * 60))
-	timespan_from_m=$(($(echo ${timespan_start_m} | sed 's/^0//') * 60))
-	timespan_from=$((${timespan_from_h} + ${timespan_from_m}))
-
-	timespan_till_h=$(($(echo ${timespan_stop_h} | sed 's/^0//') * 60 * 60))
-	timespan_till_m=$(($(echo ${timespan_stop_m} | sed 's/^0//') * 60))
-	timespan_till=$((${timespan_till_h} + ${timespan_till_m}))
-
-	ret=1
-	if [ "$timespan_over_midnight" = "false" ]; then
-		if ! [ $timer_start -ge $timespan_from -a $timer_start -le $timespan_till ]; then
-			# timer doesn't start inside timespan
-			ret=0 # prevent
-		fi
-	else
-		if [ $timer_start -gt $timespan_till -a $timer_start -lt $timespan_from ]; then
-			# timer starts outside timespan
-			ret=0 # prevent
-		fi
-	fi
-	return $ret
+  #$1: alarm time
+  if [ "$timespan" = "*" ]; then
+    return 1 # don't prevent
+  fi
+  
+  timer_start_h=$(($(echo $(date -D %s -d ${1} +%H) | sed 's/^0//') * 60 * 60))
+  timer_start_m=$(($(echo $(date -D %s -d ${1} +%M) | sed 's/^0//') * 60))
+  timer_start=$((${timer_start_h} + ${timer_start_m}))
+  
+  timespan_from_h=$(($(echo ${timespan_start_h} | sed 's/^0//') * 60 * 60))
+  timespan_from_m=$(($(echo ${timespan_start_m} | sed 's/^0//') * 60))
+  timespan_from=$((${timespan_from_h} + ${timespan_from_m}))
+  
+  timespan_till_h=$(($(echo ${timespan_stop_h} | sed 's/^0//') * 60 * 60))
+  timespan_till_m=$(($(echo ${timespan_stop_m} | sed 's/^0//') * 60))
+  timespan_till=$((${timespan_till_h} + ${timespan_till_m}))
+  
+  ret=1
+  if [ "$timespan_over_midnight" = "false" ]; then
+    if ! [ $timer_start -ge $timespan_from -a $timer_start -le $timespan_till ]; then
+      # timer doesn't start inside timespan
+      ret=0 # prevent
+    fi
+  else
+    if [ $timer_start -gt $timespan_till -a $timer_start -lt $timespan_from ]; then
+      # timer starts outside timespan
+      ret=0 # prevent
+    fi
+  fi
+  return $ret
 }
 
 remove_overlapping_timer() {
-	#Find and remove overlapping/similar timers resulting from changed EPG data
-	#$1: channel name (ignore case)
-	#$2: alarm time
-	#$3: timerd event type
-	#returns: API result (hopefully: 'ok')
-	#Note: remove_overlapping_timer ignores repeated timers
-	alarm_time=$2
-	wget -qO - "$webserver_url/control/timer" | awk -v pattern="# $3 0 0 # # # $1" '{
+  #Find and remove overlapping/similar timers resulting from changed EPG data
+  #$1: channel name (ignore case)
+  #$2: alarm time
+  #$3: timerd event type
+  #returns: API result (hopefully: 'ok')
+  #Note: remove_overlapping_timer ignores repeated timers
+  alarm_time=$2
+  wget -qO - "$webserver_url/control/timer" | awk -v pattern="# $3 0 0 # # # $1" '{
 		timer_id=$1;
 		tstart_sec=$6;
 		$1=$5=$6=$7="#";
 		if(tolower($0)==tolower(pattern)) {
 			print timer_id " " tstart_sec;
 		}
-	}' | while read timer; do
-		begin_ifs_block
-			IFS=' '
-			set -- $timer
-			timer_id=$1
-			tstart_sec=$2
-		end_ifs_block
-		
-		if [ $alarm_time -gt $tstart_sec ]; then
-			diff_secs=$(( $alarm_time - $tstart_sec ))
-		else
-			diff_secs=$(( $tstart_sec - $alarm_time ))
-		fi
-		if [ $diff_secs -le $max_diff_secs ]; then
-			if [ $DEBUG_DRY_RUN == 0 ]; then
-				result=$(wget -qO - "$webserver_url/control/timer?action=remove&id=$timer_id")
-			else
-				result="DISABLED: DEBUG_DRY_RUN"
-			fi
-			log "\t\tremove_overlapping_timer: Timer id: $timer_id overlaps by $diff_secs seconds (max: $max_diff_secs). Removing: $result"
-		fi
-	done
+  }' | while read timer; do
+    begin_ifs_block
+    IFS=' '
+    set -- $timer
+    timer_id=$1
+    tstart_sec=$2
+    end_ifs_block
+    
+    if [ $alarm_time -gt $tstart_sec ]; then
+      diff_secs=$(( $alarm_time - $tstart_sec ))
+    else
+      diff_secs=$(( $tstart_sec - $alarm_time ))
+    fi
+    if [ $diff_secs -le $max_diff_secs ]; then
+      if [ $DEBUG_DRY_RUN == 0 ]; then
+        result=$(wget -qO - "$webserver_url/control/timer?action=remove&id=$timer_id")
+      else
+        result="DISABLED: DEBUG_DRY_RUN"
+      fi
+      log "\t\tremove_overlapping_timer: Timer id: $timer_id overlaps by $diff_secs seconds (max: $max_diff_secs). Removing: $result"
+    fi
+  done
 }
 
 find_timer2() {
-	#Find an (exact) existing timer using channel name, alarm time, stop time and event type
-	#$1: channel name
-	#$2: alarm time
-	#$3: stop time
-	#$4: event type (5: record, 3: zapto)
-	#$5: Override = 1
-	#Note: find_timer ignores repeated timers
-	S="$1;$2;$3;$4"
-	ret=1
-	if [ $DEL_TIMER_REFRESH -eq 0 ] || [ $5 -eq 1 ]; then
-		if [ -e $TMR2_FILE ]; then
-			while read line
-			do
-				if [ "$line" == "$S" ]; then
-					ret=0
-					break
-				fi
-			done < $TMR2_FILE
-		fi
-	fi
-	return $ret
+  #Find an (exact) existing timer using channel name, alarm time, stop time and event type
+  #$1: channel name
+  #$2: alarm time
+  #$3: stop time
+  #$4: event type (5: record, 3: zapto)
+  #$5: Override = 1
+  #Note: find_timer ignores repeated timers
+  S="$1;$2;$3;$4"
+  ret=1
+  if [ $DEL_TIMER_REFRESH -eq 0 ] || [ $5 -eq 1 ]; then
+    if [ -e $TMR2_FILE ]; then
+      while read line
+      do
+        if [ "$line" == "$S" ]; then
+          ret=0
+          break
+        fi
+      done < $TMR2_FILE
+    fi
+  fi
+  return $ret
 }
 
 add_timer2() {
-	#Timer zur internen Liste hinzufügen, um nochmaligen Eintrag nach manuellem löschen zu verhindern.
-	#$1: channel name
-	#$2: alarm time
-	#$3: stop time
-	#$4: timerd event type
-	S="$1;$2;$3;$4"
-	if [ $DEL_TIMER_REFRESH -lt 2 ] && [ "$TMR2_FILE" != "" ]; then
-		if  ! find_timer2 "$1" $2 $3 $4 1; then
-			echo -e "$S" >> $TMR2_FILE
-		fi
-	fi
+  #Timer zur internen Liste hinzufügen, um nochmaligen Eintrag nach manuellem löschen zu verhindern.
+  #$1: channel name
+  #$2: alarm time
+  #$3: stop time
+  #$4: timerd event type
+  S="$1;$2;$3;$4"
+  if [ $DEL_TIMER_REFRESH -lt 2 ] && [ "$TMR2_FILE" != "" ]; then
+    if  ! find_timer2 "$1" $2 $3 $4 1; then
+      echo -e "$S" >> $TMR2_FILE
+    fi
+  fi
 }
 
 clean_timer2() {
-	jetzt=$(date +%s)
-	i=0
-	a=0
-	if [ -e $TMR2_TEMPFILE ]; then
-		rm $TMR2_TEMPFILE
-		log "Tempfile geloescht"
-	fi
-	log "TimerRefresh Einstellung: $DEL_TIMER_REFRESH"
-	if [ $DEL_TIMER_REFRESH -lt 2 ]; then
-		if [ -e $TMR2_FILE ]; then
-			while read line
-			do
-				# split line
-				begin_ifs_block
-					IFS=';'
-					set -- $line
-					channelname="$1"
-					starttime=$2
-					endtime=$3
-					type=$4
-				end_ifs_block
-				if [ $endtime -gt $jetzt ]; then
-						if [ $MAX_TMR2_COUNT -gt $a ]; then
-							echo -e "$line" >> $TMR2_TEMPFILE
-						fi
-					a=$(($a+1))
-				else
-					i=1
-				fi
-			done < $TMR2_FILE
-			if [ $i -eq 1 ]; then
-				log "$TMR2_FILE cleaned."
-				rm $TMR2_FILE
-				if [ -e $TMR2_TEMPFILE ]; then
-					cp $TMR2_TEMPFILE $TMR2_FILE
-				fi
-			fi
-		fi
-		if [ -e $TMR2_TEMPFILE ]; then
-			rm $TMR2_TEMPFILE
-			log "Tempfile geloescht2."
-		fi
-	else
-		if [ -e $TMR2_FILE ]; then
-			rm $TMR2_FILE
-			log "Zwischenspeicher geloescht."
-		fi
-	fi
+  jetzt=$(date +%s)
+  i=0
+  a=0
+  if [ -e $TMR2_TEMPFILE ]; then
+    rm $TMR2_TEMPFILE
+    log "Tempfile geloescht"
+  fi
+  log "TimerRefresh Einstellung: $DEL_TIMER_REFRESH"
+  if [ $DEL_TIMER_REFRESH -lt 2 ]; then
+    if [ -e $TMR2_FILE ]; then
+      while read line
+      do
+        # split line
+        begin_ifs_block
+        IFS=';'
+        set -- $line
+        channelname="$1"
+        starttime=$2
+        endtime=$3
+        type=$4
+        end_ifs_block
+        if [ $endtime -gt $jetzt ]; then
+          if [ $MAX_TMR2_COUNT -gt $a ]; then
+            echo -e "$line" >> $TMR2_TEMPFILE
+          fi
+          a=$(($a+1))
+        else
+          i=1
+        fi
+      done < $TMR2_FILE
+      if [ $i -eq 1 ]; then
+        log "$TMR2_FILE cleaned."
+        rm $TMR2_FILE
+        if [ -e $TMR2_TEMPFILE ]; then
+          cp $TMR2_TEMPFILE $TMR2_FILE
+        fi
+      fi
+    fi
+    if [ -e $TMR2_TEMPFILE ]; then
+      rm $TMR2_TEMPFILE
+      log "Tempfile geloescht2."
+    fi
+  else
+    if [ -e $TMR2_FILE ]; then
+      rm $TMR2_FILE
+      log "Zwischenspeicher geloescht."
+    fi
+  fi
 }
 
 add_timer() {
-	#Add a timer using channel name, channel id, alarm time, stop time and event type if it does not already exist. Overlapping timers are removed before.
-	#$1: channel name
-	#$2: channel id
-	#$3: alarm time
-	#$4: stop time
-	#$5: timerd event type
-	#$6: alt rec dir
-	#Note: Announce time is ignored.
-	S="$1;$3;$4;$5"
-	if [ "$first_match" = "done" ]; then
-		return
-	fi
-	if find_timer "$1" $3 $4 $5; then
-		log "\t\tadd_timer: Identical timer '$1' $3 $4 $5 already exists. Skipping."
-	elif find_timer2 "$1" $3 $4 $5 0; then
-		log "\t\tadd_timer: Identical timer '$1' $3 $4 $5 already set. Skipping."
-	elif prevent_timer_by_timespan $3; then
-		log "\t\tadd_timer: Preventing timer '$1' $3 ($(date -D %s -d ${3} +"%H:%M")) by timespan ($timespan). Skipping."
-	else
-		remove_overlapping_timer "$1" $3 $5
-		if [ $DEBUG_DRY_RUN == 0 ]; then
-			result=$(wget -qO - "$webserver_url/control/timer?action=new&type=$5&alarm=$3&stop=$4&channel_id=$2&rec_dir=$6")
-			add_timer2 "$1" $3 $4 $5
-		else
-			result="DISABLED: DEBUG_DRY_RUN"
-		fi
-		log "\t\tadd_timer: Adding timer '$1' $3 $4 $5: $result."
-		if [ "$first_match" = "true" ]; then
-			log "\t\tadd_timer: Ignoring possible following shows on '$1'."
-			first_match=done;
-		fi
-	fi
+  #Add a timer using channel name, channel id, alarm time, stop time and event type if it does not already exist. Overlapping timers are removed before.
+  #$1: channel name
+  #$2: channel id
+  #$3: alarm time
+  #$4: stop time
+  #$5: timerd event type
+  #$6: alt rec dir
+  #Note: Announce time is ignored.
+  S="$1;$3;$4;$5"
+  if [ "$first_match" = "done" ]; then
+    return
+  fi
+  if find_timer "$1" $3 $4 $5; then
+    log "\t\tadd_timer: Identical timer '$1' $3 $4 $5 already exists. Skipping."
+    elif find_timer2 "$1" $3 $4 $5 0; then
+    log "\t\tadd_timer: Identical timer '$1' $3 $4 $5 already set. Skipping."
+    elif prevent_timer_by_timespan $3; then
+    log "\t\tadd_timer: Preventing timer '$1' $3 ($(date -D %s -d ${3} +"%H:%M")) by timespan ($timespan). Skipping."
+  else
+    remove_overlapping_timer "$1" $3 $5
+    if [ $DEBUG_DRY_RUN == 0 ]; then
+      result=$(wget -qO - "$webserver_url/control/timer?action=new&type=$5&alarm=$3&stop=$4&channel_id=$2&rec_dir=$6")
+      add_timer2 "$1" $3 $4 $5
+    else
+      result="DISABLED: DEBUG_DRY_RUN"
+    fi
+    log "\t\tadd_timer: Adding timer '$1' $3 $4 $5: $result."
+    if [ "$first_match" = "true" ]; then
+      log "\t\tadd_timer: Ignoring possible following shows on '$1'."
+      first_match=done;
+    fi
+  fi
 }
 
 signal_handler() {
-	#Handle INT, TERM signals and clean up.
-	log "Caught signal. Cleaning up."
-	cleanup
-	set +f
-	log "done."
-	exit $EXIT_SIGNAL
+  #Handle INT, TERM signals and clean up.
+  log "Caught signal. Cleaning up."
+  cleanup
+  set +f
+  log "done."
+  exit $EXIT_SIGNAL
 }
 
 cleanup() {
-	#Remove temporary directory and PID file.
-	if [ $DEBUG_TEMP == 0 ]; then
-		log "\tcleanup: Removing directory '$temp_dir'..."
-		rm -rf $temp_dir 2>/dev/null
-	fi
-	rm -rf $PID_FILE 2>/dev/null
+  #Remove temporary directory and PID file.
+  if [ $DEBUG_TEMP == 0 ]; then
+    log "\tcleanup: Removing directory '$temp_dir'..."
+    rm -rf $temp_dir 2>/dev/null
+  fi
+  rm -rf $PID_FILE 2>/dev/null
 }
 
 trap signal_handler INT TERM
 
 if [ -e $PID_FILE ]; then
-	log "$ME ist already running. Exiting..."
-	exit $EXIT_ALREADY_RUNNING
+  log "$ME ist already running. Exiting..."
+  exit $EXIT_ALREADY_RUNNING
 else
-	echo $$ > $PID_FILE
+  echo $$ > $PID_FILE
 fi
 
 init_config
@@ -1235,10 +1235,10 @@ init_config
 log "$ME V$VERSION started."
 
 if [ $DEBUG_TEMP == 1 ]; then
-	log "\tmain: !!! WARNING: DEBUG_TEMP is enabled. Temporary files will not be removed !!!"
+  log "\tmain: !!! WARNING: DEBUG_TEMP is enabled. Temporary files will not be removed !!!"
 fi
 if [ $DEBUG_DRY_RUN == 1 ]; then
-	log "\tmain: !!! WARNING: DEBUG_DRY_RUN is enabled. Timers will not be modified !!!"
+  log "\tmain: !!! WARNING: DEBUG_DRY_RUN is enabled. Timers will not be modified !!!"
 fi
 
 init_settings
@@ -1249,100 +1249,100 @@ init_displaylog
 parse_options $@
 
 if [ $opt_menu ]; then
-	msgbox title="$NAME" size=20 timeout=5 refresh=0 cyclic=0 popup="Running..." >/dev/null
+  msgbox title="$NAME" size=20 timeout=5 refresh=0 cyclic=0 popup="Running..." >/dev/null
 fi
 
 for rule_file in $RULE_FILES; do
-	log "\tmain: processing '${rule_file}'"
-	rule_line=0
-	cat $rule_file | while read line ;do
-		rule_line=$((${rule_line}+1))
-		if echo $line | egrep -q '^[[:space:]]*([^#;]+);+([^;]+);+([^;]+);?([^;/]+)?;?([^;]+)?;?$'; then
-			# split config line
-			begin_ifs_block
-				IFS=';'
-				set -- $line
-				channelname=$1
-				dowfilter=$2
-				regex=$3
-				flags=$4
-				recdir=$5
-			end_ifs_block
-
-			# split dowfilter
-			begin_ifs_block
-				IFS=','
-				set -- $dowfilter
-				dowfilter=$1
-				timespan=$2
-			end_ifs_block
-
-			# split regex
-			begin_ifs_block
-				IFS=','
-				set -- $regex
-				regex=$1
-				xregex=$2
-			end_ifs_block
-
-			parse_regexes
-			parse_timespan "$timespan"
-			parse_flags "$flags"
-			parse_recdir
-
-			log "\tmain: channel: '$channelname', dow: '$dowfilter', timespan: '$timespan', regex: '$regex', xregex: '${xregex:-none}', yregex: '${yregex:-none}', nregex: '${nregex:-none}', jregex: '${jregex:-none}', event type: '$event_type', flags: '${flags:-none}', rec dir: '${recdir:-std::neutrino}'"
-
-			shows=$(find_show "$channelname" "$regex" "$xregex" "$yregex" "$nregex" "$jregex")
-			shows_found=0
-
-			echo -e "$shows" | {
-				while read result; do
-					if [ "$result" = "" ]; then
-						break
-					fi
-					shows_found=$(( $shows_found + 1 ))
-
-					begin_ifs_block
-						IFS='|'
-						set -- $result
-						channelid=$1
-						start_sec=$2
-						stop_sec=$3
-						channelname=$4
-						description=$5
-					end_ifs_block
-
-					set -- $(get_corrected_start_stop_times $start_sec $stop_sec $event_type)
-					start_sec_corrected=$1
-					stop_sec_corrected=$2
-
-					dow=$(date -D %s -d ${start_sec} +%a)
-					parse_dowgroup
-
-					log "\t\tmain: description: '$description', channelname: '$channelname', channelid: $channelid"
-					log "\t\tdow: $dow, start_sec: $start_sec, start_sec_corrected: $start_sec_corrected, stop_sec: $stop_sec, stop_sec_corrected: $stop_sec_corrected"
-
-					if [ $start_sec_corrected -gt $(date +%s) ]; then
-						if [ "$dow" = "$dowfilter" -o "$dowfilter" = "*" -o "$dowgroup" = "true" ]; then
-							add_timer "$channelname" $channelid $start_sec_corrected $stop_sec_corrected $event_type $recdir
-							if [ "$first_match" = "done" ]; then
-								if [ "$only_once" = "true" ]; then
-									log "\t\tmain: Deactivating entry in rules-file as requested."
-									sed -i "${rule_line} s/^/#/g" ${rule_file}
-								fi
-								break
-							fi
-						else
-							log "\t\tmain: NOT adding timer because of non-matching weekday."
-						fi
-					else
-						log "\t\tmain: NOT adding timer because start_secs lies in the past."
-					fi
-				done
-				displaylog "~T0150 $channelname ~T0300 $dowfilter ~T0350 $regex ~T0900 $shows_found Treffer"
-			}
-		fi
-	done # while loop
+  log "\tmain: processing '${rule_file}'"
+  rule_line=0
+  cat $rule_file | while read line ;do
+    rule_line=$((${rule_line}+1))
+    if echo $line | egrep -q '^[[:space:]]*([^#;]+);+([^;]+);+([^;]+);?([^;/]+)?;?([^;]+)?;?$'; then
+      # split config line
+      begin_ifs_block
+      IFS=';'
+      set -- $line
+      channelname=$1
+      dowfilter=$2
+      regex=$3
+      flags=$4
+      recdir=$5
+      end_ifs_block
+      
+      # split dowfilter
+      begin_ifs_block
+      IFS=','
+      set -- $dowfilter
+      dowfilter=$1
+      timespan=$2
+      end_ifs_block
+      
+      # split regex
+      begin_ifs_block
+      IFS=','
+      set -- $regex
+      regex=$1
+      xregex=$2
+      end_ifs_block
+      
+      parse_regexes
+      parse_timespan "$timespan"
+      parse_flags "$flags"
+      parse_recdir
+      
+      log "\tmain: channel: '$channelname', dow: '$dowfilter', timespan: '$timespan', regex: '$regex', xregex: '${xregex:-none}', yregex: '${yregex:-none}', nregex: '${nregex:-none}', jregex: '${jregex:-none}', event type: '$event_type', flags: '${flags:-none}', rec dir: '${recdir:-std::neutrino}'"
+      
+      shows=$(find_show "$channelname" "$regex" "$xregex" "$yregex" "$nregex" "$jregex")
+      shows_found=0
+      
+      echo -e "$shows" | {
+        while read result; do
+          if [ "$result" = "" ]; then
+            break
+          fi
+          shows_found=$(( $shows_found + 1 ))
+          
+          begin_ifs_block
+          IFS='|'
+          set -- $result
+          channelid=$1
+          start_sec=$2
+          stop_sec=$3
+          channelname=$4
+          description=$5
+          end_ifs_block
+          
+          set -- $(get_corrected_start_stop_times $start_sec $stop_sec $event_type)
+          start_sec_corrected=$1
+          stop_sec_corrected=$2
+          
+          dow=$(date -D %s -d ${start_sec} +%a)
+          parse_dowgroup
+          
+          log "\t\tmain: description: '$description', channelname: '$channelname', channelid: $channelid"
+          log "\t\tdow: $dow, start_sec: $start_sec, start_sec_corrected: $start_sec_corrected, stop_sec: $stop_sec, stop_sec_corrected: $stop_sec_corrected"
+          
+          if [ $start_sec_corrected -gt $(date +%s) ]; then
+            if [ "$dow" = "$dowfilter" -o "$dowfilter" = "*" -o "$dowgroup" = "true" ]; then
+              add_timer "$channelname" $channelid $start_sec_corrected $stop_sec_corrected $event_type $recdir
+              if [ "$first_match" = "done" ]; then
+                if [ "$only_once" = "true" ]; then
+                  log "\t\tmain: Deactivating entry in rules-file as requested."
+                  sed -i "${rule_line} s/^/#/g" ${rule_file}
+                fi
+                break
+              fi
+            else
+              log "\t\tmain: NOT adding timer because of non-matching weekday."
+            fi
+          else
+            log "\t\tmain: NOT adding timer because start_secs lies in the past."
+          fi
+        done
+        displaylog "~T0150 $channelname ~T0300 $dowfilter ~T0350 $regex ~T0900 $shows_found Treffer"
+      }
+    fi
+  done # while loop
 done # for loop
 
 parse_timespan	# reset timespan
@@ -1351,85 +1351,85 @@ parse_flags	# reset flags
 parse_sky_cinema
 
 if [ ! "$sky_cinema" = "" ]; then
-	log "\tmain: processing new movies at \"$sky_cinema\""
-
-	parse_timespan "$timespan"
-	parse_recdir
-
-	sky_moviedata=$(get_sky_moviedata)
-
-	echo "$sky_moviedata" | while read sky_date sky_movie; do
-		if sky_start_sec=$(date -d "$sky_date" +%s 2>/dev/null); then
-			sky_start_sec=$((sky_start_sec \+ sky_start_sec_add))
-			sky_show_data=$(find_show_by_start_sec "$sky_cinema" "$sky_start_sec")
-			if [ ! "$sky_show_data" = "" ]; then
-				# split sky_show_data
-				begin_ifs_block
-					IFS='|'
-					set -- $sky_show_data
-					channelid=$1
-					start_sec=$2
-					stop_sec=$3
-				end_ifs_block
-
-				set -- $(get_corrected_start_stop_times $start_sec $stop_sec $event_type)
-				start_sec_corrected=$1
-				stop_sec_corrected=$2
-
-				dow=$(date -D %s -d ${start_sec} +%a)
-				parse_dowgroup
-
-				if [ $start_sec_corrected -gt $(date +%s) ]; then
-					if [ "$dow" = "$dowfilter" -o "$dowfilter" = "*" -o "$dowgroup" = "true" ]; then
-						add_timer "$sky_cinema" $channelid $start_sec_corrected $stop_sec_corrected $event_type $recdir
-						displaylog "~T0150 $sky_cinema ~T0300 $(date -D %s -d ${start_sec} '+%d.%m.%Y %H:%M'): $sky_movie"
-					else
-						log "\t\tmain: NOT adding timer because of non-matching weekday."
-					fi
-				fi
-			fi
-		fi
-	done
+  log "\tmain: processing new movies at \"$sky_cinema\""
+  
+  parse_timespan "$timespan"
+  parse_recdir
+  
+  sky_moviedata=$(get_sky_moviedata)
+  
+  echo "$sky_moviedata" | while read sky_date sky_movie; do
+    if sky_start_sec=$(date -d "$sky_date" +%s 2>/dev/null); then
+      sky_start_sec=$((sky_start_sec \+ sky_start_sec_add))
+      sky_show_data=$(find_show_by_start_sec "$sky_cinema" "$sky_start_sec")
+      if [ ! "$sky_show_data" = "" ]; then
+        # split sky_show_data
+        begin_ifs_block
+        IFS='|'
+        set -- $sky_show_data
+        channelid=$1
+        start_sec=$2
+        stop_sec=$3
+        end_ifs_block
+        
+        set -- $(get_corrected_start_stop_times $start_sec $stop_sec $event_type)
+        start_sec_corrected=$1
+        stop_sec_corrected=$2
+        
+        dow=$(date -D %s -d ${start_sec} +%a)
+        parse_dowgroup
+        
+        if [ $start_sec_corrected -gt $(date +%s) ]; then
+          if [ "$dow" = "$dowfilter" -o "$dowfilter" = "*" -o "$dowgroup" = "true" ]; then
+            add_timer "$sky_cinema" $channelid $start_sec_corrected $stop_sec_corrected $event_type $recdir
+            displaylog "~T0150 $sky_cinema ~T0300 $(date -D %s -d ${start_sec} '+%d.%m.%Y %H:%M'): $sky_movie"
+          else
+            log "\t\tmain: NOT adding timer because of non-matching weekday."
+          fi
+        fi
+      fi
+    fi
+  done
 fi
 
 if [ $opt_menu ]; then
-	msgbox title="$NAME" size=20 refresh=0 cyclic=0 timeout=15 popup=$displaylogfile >/dev/null
+  msgbox title="$NAME" size=20 refresh=0 cyclic=0 timeout=15 popup=$displaylogfile >/dev/null
 fi
 
 if [ $DEBUG_DISPLAYLOG == 1 ]; then
-	cat $displaylogfile
+  cat $displaylogfile
 fi
 
 cleanup
 clean_timer2
 log "END_SHUT_DOWN: $END_SHUT_DOWN"
 if [ $END_SHUT_DOWN -gt 0 ]; then
-	# wait while recording
-	while [ $(wget -q -O - $webserver_url/control/setmode?status | dos2unix) = "on" ]
-	do
-		log "Eine Aufnahme laeuft. Ich warte..."
-		sleep 900
-	done
-
-	Stunde=$(date +%H)
-	log "aktuelle Stunde: $Stunde"
-	if [ x"$(pidof EPGscan.sh)" = "x" ]; then
-		log "SHUT_DOWN_ALSO_DAY: $SHUT_DOWN_ALSO_DAY"
-		if [ $SHUT_DOWN_ALSO_DAY -eq 1 ] || [ $Stunde -lt 6 ]; then
-			case $END_SHUT_DOWN in
-				1) (sleep 2; wget -qO "/dev/null" "$webserver_url/control/standby?on") &	;;
-				2) (sleep 2; wget -qO "/dev/null" "$webserver_url/control/shutdown") &	;;
-				3) (sleep 2; halt) &	;;
-				4) (sleep 2; reboot) &	;;
-			esac
-		else
-			log "SHUTDOWN wegen Uhrzeit übersprungen!"
-		fi
-	else
-		log "EPGscan gefunden - SHUTDOWN ignoriert!"
-	fi
+  # wait while recording
+  while [ $(wget -q -O - $webserver_url/control/setmode?status | dos2unix) = "on" ]
+  do
+    log "Eine Aufnahme laeuft. Ich warte..."
+    sleep 900
+  done
+  
+  Stunde=$(date +%H)
+  log "aktuelle Stunde: $Stunde"
+  if [ x"$(pidof EPGscan.sh)" = "x" ]; then
+    log "SHUT_DOWN_ALSO_DAY: $SHUT_DOWN_ALSO_DAY"
+    if [ $SHUT_DOWN_ALSO_DAY -eq 1 ] || [ $Stunde -lt 6 ]; then
+      case $END_SHUT_DOWN in
+        1) (sleep 2; wget -qO "/dev/null" "$webserver_url/control/standby?on") &	;;
+        2) (sleep 2; wget -qO "/dev/null" "$webserver_url/control/shutdown") &	;;
+        3) (sleep 2; halt) &	;;
+        4) (sleep 2; reboot) &	;;
+      esac
+    else
+      log "SHUTDOWN wegen Uhrzeit übersprungen!"
+    fi
+  else
+    log "EPGscan gefunden - SHUTDOWN ignoriert!"
+  fi
 else
-	log "SHUTDOWN deaktiviert!"
+  log "SHUTDOWN deaktiviert!"
 fi
 
 log "done."

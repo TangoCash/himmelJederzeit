@@ -25,7 +25,7 @@
 
 # Todo:
 #
-#	- 
+#	-
 
 # Changelog:
 #
@@ -50,7 +50,7 @@ pwd=`pwd`
 var=`dirname $pwd`
 #root=`dirname $var`
 root=${root}"/"
-		
+
 FilmName="Filme.sorted"
 FilmStatusName="Film.status"
 SerienName="Serien.sorted"
@@ -70,7 +70,7 @@ export filmDeletionFile=${output}"deletionFilmFile"
 export deletionExecutionFile=${output}"executeDeletion.sh"
 filmFilePrevious=${output}${FilmName}".orig"
 filmStatusFile=${output}${FilmStatusName}
-serienFile=${output}${SerienName} 
+serienFile=${output}${SerienName}
 weltFile=${output}${WeltName}
 
 lib=$jederzeitdir"lib/"
@@ -78,11 +78,11 @@ tmp_file=${tmp}"tmp_file"
 wgetDirectory=${tmp}"wget/"
 
 log() {
-	#Log message to log file
-	#$*: Log message
-	if [ "$log" != "" ]; then
-		echo -e $(date +'%F %H:%M:%S') [$$]: "$*" >> $log
-	fi
+  #Log message to log file
+  #$*: Log message
+  if [ "$log" != "" ]; then
+    echo -e $(date +'%F %H:%M:%S') [$$]: "$*" >> $log
+  fi
 }
 
 
@@ -101,14 +101,14 @@ source ${lib}getExistingMovies.sh
 
 if [ ! -f ${jederzeitdir}himmelJederzeit.cfg ]
 then
-	cp ${jederzeitdir}himmelJederzeit.cfg.template ${jederzeitdir}himmelJederzeit.cfg		
+  cp ${jederzeitdir}himmelJederzeit.cfg.template ${jederzeitdir}himmelJederzeit.cfg
 fi
 removeWrongEntriesFromConfigFile() {
-	grep -v "\[" ${jederzeitdir}himmelJederzeit.cfg > ${tmp_file}
-	mv ${tmp_file} ${jederzeitdir}himmelJederzeit.cfg
-	
+  grep -v "\[" ${jederzeitdir}himmelJederzeit.cfg > ${tmp_file}
+  mv ${tmp_file} ${jederzeitdir}himmelJederzeit.cfg
+  
 }
-	
+
 removeWrongEntriesFromConfigFile
 
 source ${jederzeitdir}himmelJederzeit.cfg
@@ -123,52 +123,52 @@ rm $allXMLFiles
 
 
 case $1 in
-	"initGUI" )
-		initGUI
-	;;
-	"init" )
-		init
-	;;
-	"cleanup")
-		cleanUp
-	;;
-	"connect" )
-		getHTML
-	;;
-	"deleteFiles" )
-	#	echo "existingMoviesFile="$existingMoviesFile
-	#echo "deletionExecutionFile="$deletionExecutionFile
-	#echo "filmDeletionFile="$filmDeletionFile
-		deleteFiles
-	;;
-	"full" )
-		getHimmelJederzeitBouquet
-		cleanUp
-		setUp
-		getHTML
-		awkInfos
-		Stand
-		removeAlreadyTimedEntries
-		removeUnwanted
-	;;
-	"removeUnwanted" )
-		removeUnwanted
-	;;
-	"addAutotimerConfToPrAutoTimer" )
-		addAutotimerConfToPrAutoTimer
-	;;
-	"Stand" )
-		Stand
-		removeAlreadyTimedEntries
-	;;
-	*)
-		getHimmelJederzeitBouquet
-		cleanUp
-		setUp
-		awkInfos
-		Stand
-		removeAlreadyTimedEntries
-		removeUnwanted
-	;;
-	
+  "initGUI" )
+    initGUI
+  ;;
+  "init" )
+    init
+  ;;
+  "cleanup")
+    cleanUp
+  ;;
+  "connect" )
+    getHTML
+  ;;
+  "deleteFiles" )
+    #	echo "existingMoviesFile="$existingMoviesFile
+    #echo "deletionExecutionFile="$deletionExecutionFile
+    #echo "filmDeletionFile="$filmDeletionFile
+    deleteFiles
+  ;;
+  "full" )
+    getHimmelJederzeitBouquet
+    cleanUp
+    setUp
+    getHTML
+    awkInfos
+    Stand
+    removeAlreadyTimedEntries
+    removeUnwanted
+  ;;
+  "removeUnwanted" )
+    removeUnwanted
+  ;;
+  "addAutotimerConfToPrAutoTimer" )
+    addAutotimerConfToPrAutoTimer
+  ;;
+  "Stand" )
+    Stand
+    removeAlreadyTimedEntries
+  ;;
+  *)
+    getHimmelJederzeitBouquet
+    cleanUp
+    setUp
+    awkInfos
+    Stand
+    removeAlreadyTimedEntries
+    removeUnwanted
+  ;;
+  
 esac
