@@ -7,40 +7,40 @@ hans=1;
 }
 // {
 
-  if ( substr($7,0,3) == "Kom" )
+  if ( substr($9,0,3) == "Kom" )
   {
-    $7 = "Comedy";
+    $9 = "Comedy";
   }
-  if ( substr($7,0,6) == "Sci-Fi" || substr($7,0,5) == "SciFi" ) 
+  if ( substr($9,0,6) == "Sci-Fi" || substr($9,0,5) == "SciFi" ) 
   {
-    $7 = "SciFi";
+    $9 = "SciFi";
   }
-  if ( substr($7,0,5) == "Drama") 
+  if ( substr($9,0,5) == "Drama") 
   {
-    $7 = "Drama";
+    $9 = "Drama";
   }
-  if ( substr($7,0,9) =="Abenteuer" )
+  if ( substr($9,0,9) =="Abenteuer" )
   {
-    $7 = "Adventure";
+    $9 = "Adventure";
   }
-  if ( substr($7,0,7) =="Familie")
+  if ( substr($9,0,7) =="Familie")
   {
-    $7 = "Family";
+    $9 = "Family";
   }
  
  if ( length($2) > 0 )
  {
 	if ( timeSpan != "" )
   	{
-    	printf("*%s;*,%s;%s,!Making;O;%sanytime/%s\n",bouquet,timeSpan,$2,mediaVerzeichnis,$7) >> output_file
+    	printf("*%s;*,%s;%s,!Making;O;%sanytime/%s\n",bouquet,timeSpan,$2,mediaVerzeichnis,$9) >> output_file
   	}
   	else if ( NF > 0 )
   	{
-     	printf("*%s;*;%s,!Making;O;%sanytime/%s\n",bouquet,$2,mediaVerzeichnis,$7) >> output_file
+     	printf("*%s;*;%s,!Making;O;%sanytime/%s\n",bouquet,$2,mediaVerzeichnis,$9) >> output_file
   	}
   	if ( length($6) > 0 )
   	{
-		printf("%s|%s|%sanytime/%s\n",$2,$6,mediaVerzeichnis,$7) >> deletionFile
+		printf("%s|%s|%sanytime/%s\n",$2,$6,mediaVerzeichnis,$9) >> deletionFile
 	}
 	else
 	{
