@@ -98,6 +98,10 @@ function rem_hj()
 	---os.execute("cd /var/tuxbox/plugins;./himmelJederzeit.sh deleteFiles")
 end
 
+function pr_auto()
+	os.execute("/var/tuxbox/plugins/pr-auto-timer &")
+end
+
 function handle_key(a)
 	if (changed == 0) then return MENU_RETURN["EXIT"] end
 	local res = messagebox.exec{title="Änderungen verwerfen?", text="Sollen die Änderungen verworfen werden?", buttons={ "yes", "no" } }
@@ -114,6 +118,7 @@ m:addItem{type="separator"}
 m:addItem{type="forwarder", name="HimmelJederzeit initialisieren", action="init_hj", icon="blau", directkey=RC["blue"]}
 m:addItem{type="forwarder", name="HimmelJederzeit aktualisieren", action="act_hj", icon="gruen", directkey=RC["green"]}
 m:addItem{type="forwarder", name="HimmelJederzeit aufräumen", action="rem_hj", icon="gelb", directkey=RC["yellow"]}
+m:addItem{type="forwarder", name="HimmelJederzeit Timer setzen", action="pr_auto", icon="epg", directkey=RC["epg"]}
 m:addItem{type="separator"}
 m:addItem{type="forwarder", name="Einstellungen Speichern", action="save", icon="rot", directkey=RC["red"]}
 m:addItem{type="separator"}
